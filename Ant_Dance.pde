@@ -9,6 +9,9 @@ int SOUTHWEST = 5;
 int WEST = 6;
 int NORTHWEST= 7;
 
+int timeHandPresent;
+int timeForBed = 10000;
+
 enum GameState {antsHiding, antsPlaying}  //enumerator = named states
 GameState CURRENTSTATE = GameState.antsHiding; 
 
@@ -16,7 +19,7 @@ void setup() {
   size(400,900);
   background(255);
   noStroke();
-  frameRate(8);
+  frameRate(30);
   
   initialiseAnts();  // inialise Ant Array, see method in Ant_Factory tab
 }
@@ -26,98 +29,116 @@ void setup() {
 void draw() {
   background (255);
   
-  if (CURRENTSTATE == GameState.antsHiding)
+  if (CURRENTSTATE == GameState.antsHiding)  // action when hiding
   {
-    if (handPresent())
-    {
-      println("Hand Found!");
-      CURRENTSTATE = GameState.antsPlaying;
-      for (int i=0; i<antArray.length; i++)
-      {
-        antArray[i].setPositionToMouse();
-      }
-    }
+    actionAntHiding();
   }
-  else
+  else  // action when playing
   {
-    println("Ants Playing!");
+    actionAntPlaying();
   }
 }
 
-
-
-
-void MoveAnts()  // gets ants one at a time out of array and sends to MoveAnt method (for = untill all ants moved then start at the beginning) nerdWords = iterate through antArray and move Ants one step
-{
-  
-   for (int i=0; i<antArray.length; i++) // For(initiliaser; test; action)
-   {
-     //for each ant in the array
-     //check to see if a hand is present
-     if(handPresent())
-     {
-       //Yes, a hand is present
-       MoveAntTowardsHand(antArray[i]);
-     }
-     else
-     {
-     //Nope, dont see a hand around here anywhere
-     MoveAntRandomly(antArray[i]);
-   }
- }
- 
- 
-}
 
 boolean handPresent()
 {
   return mousePressed;
 }
 
-void MoveAntTowardsHand(Ant thisAnt)  // moves individual ants towards hand
+
+void actionAntHiding()
 {
-    
-    thisAnt.drawAnt();
+    if (handPresent())
+    {
+      CURRENTSTATE = GameState.antsPlaying;
+      for (int i=0; i<antArray.length; i++)
+      {
+        antArray[i].setPositionToMouse();
+      }
+    }
 }
 
 
-void MoveAntRandomly(Ant thisAnt)  // moves individual ants randomly
+void actionAntPlaying()
+{
+    if (handPresent())
+    {
+      timeHandPresent = millis();  // time hand was last preent
+      println(timeHandPresent);
+      moveAntsToHand(); // for each ant, attract to hand
+    }
+    else
+    {
+      if (timeHandPresent + timeForBed < millis())
+      {
+        CURRENTSTATE = GameState.antsHiding;
+      }
+      else
+      {
+        moveAntsRandomly();
+      }
+    }
+}
+
+
+void moveAntsToHand()  // moves individual ants towards hand
+{
+  for (int i=0; i<antArray.length; i++)
+  {
+    moveAntToHand(antArray[i]);
+  }
+}
+
+void moveAntToHand(Ant handAnt)
+{
+
+}
+
+void moveAntsRandomly()  // moves individual ants randomly
+{
+  for (int i=0; i<antArray.length; i++)
+  {
+    moveAntRandomly(antArray[i]);
+  }
+}
+
+void moveAntRandomly(Ant randomAnt)
 {
     int direction = (int) random(0, 8);
 
     if (direction == NORTH) {  
-      thisAnt.posY -= thisAnt.stepSize;  
+      randomAnt.posY -= randomAnt.stepSize;  
     } 
     else if (direction == NORTHEAST) {
-      thisAnt.posX += thisAnt.stepSize;
-      thisAnt.posY -= thisAnt.stepSize;
+      randomAnt.posX += randomAnt.stepSize;
+      randomAnt.posY -= randomAnt.stepSize;
     } 
     else if (direction == EAST) {
-      thisAnt.posX += thisAnt.stepSize;
+      randomAnt.posX += randomAnt.stepSize;
     } 
     else if (direction == SOUTHEAST) {
-      thisAnt.posX += thisAnt.stepSize;
-      thisAnt.posY += thisAnt.stepSize;
+      randomAnt.posX += randomAnt.stepSize;
+      randomAnt.posY += randomAnt.stepSize;
     }
     else if (direction == SOUTH) {
-      thisAnt.posY += thisAnt.stepSize;
+      randomAnt.posY += randomAnt.stepSize;
     }
     else if (direction == SOUTHWEST) {
-      thisAnt.posX -= thisAnt.stepSize;
-      thisAnt.posY += thisAnt.stepSize;
+      randomAnt.posX -= randomAnt.stepSize;
+      randomAnt.posY += randomAnt.stepSize;
     }
     else if (direction == WEST) {
-      thisAnt.posX -= thisAnt.stepSize;
+      randomAnt.posX -= randomAnt.stepSize;
     }
     else if (direction == NORTHWEST) {
-      thisAnt.posX -= thisAnt.stepSize;
-      thisAnt.posY -= thisAnt.stepSize;
+      randomAnt.posX -= randomAnt.stepSize;
+      randomAnt.posY -= randomAnt.stepSize;
     }
 
-    if (thisAnt.posX > width) thisAnt.posX = 0;
-    if (thisAnt.posX < 0) thisAnt.posX = width;
-    if (thisAnt.posY < 0) thisAnt.posY = height;
-    if (thisAnt.posY > height) thisAnt.posY = 0;
+    if (randomAnt.posX > width) randomAnt.posX = 0;
+    if (randomAnt.posX < 0) randomAnt.posX = width;
+    if (randomAnt.posY < 0) randomAnt.posY = height;
+    if (randomAnt.posY > height) randomAnt.posY = 0;
     
-    thisAnt.drawAnt();
+    randomAnt.drawAnt();
 }

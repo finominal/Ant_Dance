@@ -9,14 +9,16 @@ int SOUTHWEST = 5;
 int WEST = 6;
 int NORTHWEST= 7;
 
-
+enum GameState {antsHiding, antsPlaying}  //enumerator = named states
+GameState CURRENTSTATE = GameState.antsHiding; 
 
 void setup() {
   size(400,900);
   background(255);
   noStroke();
   frameRate(8);
-  initialiseAnts();  // Ant Array starting location, see method in Ant_Factory tab
+  
+  initialiseAnts();  // inialise Ant Array, see method in Ant_Factory tab
 }
 
 
@@ -24,9 +26,25 @@ void setup() {
 void draw() {
   background (255);
   
-  MoveAnts();    // run move ants method, see below
-  
+  if (CURRENTSTATE == GameState.antsHiding)
+  {
+    if (handPresent())
+    {
+      println("Hand Found!");
+      CURRENTSTATE = GameState.antsPlaying;
+      for (int i=0; i<antArray.length; i++)
+      {
+        antArray[i].setPositionToMouse();
+      }
+    }
+  }
+  else
+  {
+    println("Ants Playing!");
+  }
 }
+
+
 
 
 void MoveAnts()  // gets ants one at a time out of array and sends to MoveAnt method (for = untill all ants moved then start at the beginning) nerdWords = iterate through antArray and move Ants one step
@@ -36,7 +54,7 @@ void MoveAnts()  // gets ants one at a time out of array and sends to MoveAnt me
    {
      //for each ant in the array
      //check to see if a hand is present
-     if(IsAHandPresent())
+     if(handPresent())
      {
        //Yes, a hand is present
        MoveAntTowardsHand(antArray[i]);
@@ -51,7 +69,7 @@ void MoveAnts()  // gets ants one at a time out of array and sends to MoveAnt me
  
 }
 
-boolean IsAHandPresent()
+boolean handPresent()
 {
   return mousePressed;
 }

@@ -9,7 +9,7 @@ class Ant  //defines dna of one ant (where it is born, how fast it can move, wha
     float stepSize = 10;
     float diameter = 10;
     
-    void startPosition()    // creating a method because assignments can't be run outside method
+    void setPositionToMouse()    // creating a method because assignments can't be run outside method
     {
       posX = mouseX;
       posY = mouseY;
@@ -31,6 +31,5 @@ void initialiseAnts ()     // creates new ants and sticks them into their array 
      for (int i=0; i<numberOfAnts; i++) // For(initiliaser; test; action)
      {
         antArray[i] = new Ant();  
-        antArray[i].startPosition();
      }
 }

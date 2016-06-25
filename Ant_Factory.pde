@@ -1,25 +1,74 @@
 
 
-int numberOfAnts = 10;
+int numberOfAnts = 10000;
 
 
-class Ant  //defines dna of one ant (where it is born, how fast it can move, what it looks like, how it behaves)
+class Ant extends PVector //defines dna of one ant (where it is born, how fast it can move, what it looks like, how it behaves)
 {
-    float posX, posY;
-    float stepSize = 10;
+    PVector velocity = new PVector();
+    float minX=10, minY=10, maxX=width-10, maxY=height-10;
+    //float stepSize = 10;
     float diameter = 10;
+    //float damping = 0.1;
     
-    void setPositionToMouse()    // creating a method because assignments can't be run outside method
-    {
-      posX = mouseX;
-      posY = mouseY;
-    }
     
-    void drawAnt ()
+    
+    void drawAnt()
     {
       fill(0, 40);
-      ellipse(posX+stepSize/2, posY+stepSize/2, diameter, diameter);
+      ellipse(x, y, diameter, diameter);
     }
+    
+    void setPositionToMouse(){
+      x = mouseX;
+      y = mouseY;
+    }
+    
+      // ------ calculate new position of the node ------
+  void update() {
+    
+    //add velocity to current location
+    x += velocity.x;
+    y += velocity.y;
+
+//bounce off walls
+    if (x < minX) {
+      x = minX - (x - minX);
+      velocity.x = -velocity.x;
+    }
+    if (x > maxX) {
+      x = maxX - (x - maxX);
+      velocity.x = -velocity.x;
+    }
+
+    if (y < minY) {
+      y = minY - (y - minY);
+      velocity.y = -velocity.y;
+    }
+    if (y > maxY) {
+      y = maxY - (y - maxY);
+      velocity.y = -velocity.y;
+    }
+
+    //velocity.x *= (1-damping);
+    //velocity.y *= (1-damping);
+  }
+  
+  boolean IsAtNest(float nestX, float nestY)
+  {
+    //test is the ant near the attractor?
+    if(abs(nestX-x)<4 && abs(nestY-y)<4)
+    {
+  
+      return true;
+    }
+    else
+    {
+    
+    return false;
+  }
+  }
+    
 }
 
 
